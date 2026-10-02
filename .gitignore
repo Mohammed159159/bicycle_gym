@@ -1,0 +1,15 @@
+# Python bytecode and cache
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+
+# Pytest and coverage
+.pytest_cache/
+.coverage
+htmlcov/
+
+# ROS 2 build artifacts
+build/
+install/
+log/

@@ -3,6 +3,10 @@
 **Autotronics Research Lab (ARL) — Ain Shams University**  
 *Course: Autonomous Vehicles & Drive-by-Wire Systems | Individual Project*
 
+<p align="center">
+  <img src="assets/demo.gif" alt="Autonomous Vehicle Simulation Demo" width="100%" />
+</p>
+
 ---
 
 ## 📖 Hands-On Assignment Guide
