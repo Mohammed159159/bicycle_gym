@@ -28,7 +28,7 @@ class ControllerNode(Node):
         self.declare_parameter('control_mode', 'pure_pursuit')
         self.declare_parameter('target_speed', 4.0)             # m/s base speed
         self.declare_parameter('velocity_mode', 'curvature')    # 'curvature', 'constant'
-        self.declare_parameter('wheelbase', 0.3302)
+        self.declare_parameter('wheelbase', 1.25)
 
         self.control_mode = str(self.get_parameter('control_mode').value).lower()
         self.target_speed = float(self.get_parameter('target_speed').value)

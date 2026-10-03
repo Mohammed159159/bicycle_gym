@@ -35,7 +35,7 @@ class Car(Node):
         u[1]: front steering angle delta in radians via /steer (positive = turn left)
     """
 
-    def __init__(self, xInitial=None, dt=0.1, wheelbase_length=0.3302):
+    def __init__(self, xInitial=None, dt=0.1, wheelbase_length=1.25):
         super().__init__('KinematicBicycle')
         self.get_logger().info('Drive-by-Wire Extended Kinematic Bicycle Model Initialized')
 
@@ -124,7 +124,7 @@ class Car(Node):
             self.u[1]: front steering angle delta in radians (positive = left)
 
         Vehicle Physical Parameters:
-            self.wheelbase_length (L): 0.3302 m
+            self.wheelbase_length (L): 1.25 m
             self.k_a: 4.0 m/s^2 (powertrain acceleration scaling gain)
             self.c_drag: 0.005 (aerodynamic drag coefficient)
             self.c_roll: 0.05 (rolling resistance coefficient)

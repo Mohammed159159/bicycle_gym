@@ -111,7 +111,7 @@ def generate_launch_description():
             output='screen',
             arguments=['--track', track_file],
             parameters=[{
-                'wheelbase_length': 0.3302,
+                'wheelbase_length': 1.25,
                 'dt': 0.1,
                 'car_name': 'ego_racecar'
             }]

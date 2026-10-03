@@ -36,7 +36,7 @@ def main(args=None):
 
     x_initial = np.array([x0, y0, psi0, 0.0], dtype=np.float64)
 
-    car = Car(xInitial=x_initial, dt=0.1, wheelbase_length=0.3302)
+    car = Car(xInitial=x_initial, dt=0.1, wheelbase_length=1.25)
     car.get_logger().info(
         f"Spawned car at start pose: x={x0:.3f} m, y={y0:.3f} m, "
         f"yaw={psi0:.3f} rad ({np.degrees(psi0):.1f}°), v=0.0 m/s"

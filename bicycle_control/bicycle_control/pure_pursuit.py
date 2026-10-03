@@ -10,7 +10,7 @@ import numpy as np  # noqa: F401
 class PurePursuitController:
     """Adaptive Pure Pursuit lateral controller."""
 
-    def __init__(self, wheelbase=0.3302, kv=0.25, l_min=0.8, l_max=2.5,
+    def __init__(self, wheelbase=1.25, kv=0.25, l_min=0.8, l_max=2.5,
                  max_steer_rad=math.radians(35.0)):
         self.L = wheelbase
         self.kv = kv

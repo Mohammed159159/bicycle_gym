@@ -9,6 +9,8 @@ def test_track_loading():
     assert len(track.waypoints) > 100
     assert track.total_length > 10.0
     x0, y0, psi0 = track.start_pose
+    assert x0 == 0.0
+    assert y0 == 0.0
     assert isinstance(x0, float)
     assert isinstance(y0, float)
     assert isinstance(psi0, float)

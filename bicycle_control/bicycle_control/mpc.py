@@ -17,7 +17,7 @@ class KinematicBicycleMPC:
     forward-simulating a 4-state extended kinematic bicycle model x = [x, y, theta, v]^T.
     """
 
-    def __init__(self, wheelbase=0.3302, dt=0.1, horizon=10,
+    def __init__(self, wheelbase=1.25, dt=0.1, horizon=10,
                  max_steer_rad=math.radians(35.0), k_a=4.0,
                  max_accel=None, max_brake=None):
         self.L = wheelbase
