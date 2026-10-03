@@ -48,7 +48,7 @@ class Car(Node):
         self.declare_parameter('c_roll', 0.05)            # rolling resistance coefficient (v)
         self.declare_parameter('max_steer_rad', float(math.radians(35.0)))
         self.declare_parameter('max_speed', 25.0)
-        self.declare_parameter('wheel_radius', 0.0508)
+        self.declare_parameter('wheel_radius', 0.5)
 
         self.wheelbase_length = float(self.get_parameter('wheelbase_length').value)
         self.dt = float(self.get_parameter('dt').value)
