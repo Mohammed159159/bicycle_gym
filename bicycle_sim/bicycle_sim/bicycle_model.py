@@ -129,26 +129,16 @@ class Car(Node):
             self.c_drag: 0.005 (aerodynamic drag coefficient)
             self.c_roll: 0.05 (rolling resistance coefficient)
         """
-        # ======================================================================
         # TODO: Milestone 2.2 — Extended Kinematic Bicycle Equations of Motion
-        # (with Throttle/Acceleration Input and Resistance Forces)
-        # Calculate state derivatives \dot{x}, \dot{y}, \dot{\theta}, \dot{v}:
-        # Store results as a float64 numpy array in self.x_dot:
-        # ======================================================================
+        # This simulates the physics of the car moving and turning in the real world.
+        # Implement the continuous-time state derivatives based on throttle and steering.
         pass
 
     def update_x(self):
         """Integrates state forward using discrete Forward Euler numerical integration."""
-        # ======================================================================
         # TODO: Milestone 2.3 — Forward Euler Integration & Physical Constraints
-        #
-        # 1. Update state using Forward Euler:        #
-        # 2. Heading Angle Normalization:
-        #      Wrap heading self.x[2] to [-pi, pi) using math.atan2()
-        # 3. Velocity Clamping & Braking Constraint:
-        #      Clamp self.x[3] between 0.0 and self.max_speed].
-        #      Remember: braking (u_throttle < 0) must NEVER drive the car in reverse!
-        # ======================================================================
+        # This moves the simulation forward in time step-by-step.
+        # Advance the state numerically and apply realistic constraints like max speed.
         pass
 
     def update_simulation(self):

@@ -37,29 +37,11 @@ class LateralPIDController:
         Returns:
             delta_rad: Commanded front steering angle in radians [-max_steer_rad, max_steer_rad].
         """
-        # ======================================================================
         # TODO: Milestone 5.2 — Reactive Lateral PID Controller
-        #
-        # 1. Error Sign Conventions:
-        #    - Positive CTE means the vehicle is to the LEFT of the reference path.
-        #      To drive back toward the centerline, steer RIGHT (negative delta).
-        #    - Positive heading error means the vehicle is yawed LEFT of the path tangent.
-        #      To align parallel with the path, steer RIGHT (negative delta).
-        #
-        # 2. Integrator & Anti-Windup:
-        #    - Integrate lateral tracking error over time step self.dt.
-        #    - Apply anti-windup clamping to [-self.integral_limit, self.integral_limit].
-        #
-        # 3. Finite Difference Derivative:
-        #    - Calculate the rate of change of lateral error with respect to self.dt.
-        #    - Store the current error in self.prev_cte for the next cycle.
-        #
-        # 4. Steering Command & Actuator Saturation:
-        #    - Combine proportional, integral, and derivative terms for lateral tracking,
-        #      along with proportional damping on heading error (k_yaw * heading_err).
-        #    - Clamp the resulting steering angle to [-self.max_steer_rad, self.max_steer_rad].
-        #    - Return the commanded steering angle in radians.
-        # ======================================================================
+        # This is the lateral steering controller. It corrects for how far the car
+        # is off the path (CTE) and how misaligned its heading is.
+        # Implement PID on the CTE with anti-windup, add a heading correction term,
+        # and clamp the output to the steering limits.
         pass
 
     def reset(self):

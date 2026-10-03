@@ -51,14 +51,9 @@ class TeleopBridge(Node):
         self.target_vel = 0.0
         self.last_cmd_time = self.get_clock().now()
 
-        # ======================================================================
-        # Phase 2 (Milestone 4.2): Closed-Loop Cruise Control Setup
-        #
-        # When self.use_cruise_control is True:
-        # 1. Instantiate PIDLongitudinalController(kp=1.0, ki=0.2, kd=0.05, dt=0.1)
-        # 2. Subscribe to Odometry on '/state' with callback self.odom_callback
-        # 3. Maintain self.current_vel (initialized to 0.0)
-        # ======================================================================
+        # TODO: Phase 2 (Milestone 4.2) — Closed-Loop Cruise Control Setup
+        # This allows the car to automatically hold a steady speed instead of requiring manual throttle.
+        # Initialize the PID speed controller and subscribe to odometry data.
 
         # Publish loop at 10 Hz
         self.timer = self.create_timer(0.1, self.publish_commands)
@@ -69,50 +64,16 @@ class TeleopBridge(Node):
 
     def cmd_callback(self, msg: Twist):
         """Translates Twist linear.x to throttle [-1, 1] and angular.z into steering (rad)."""
-        # ======================================================================
         # TODO: Milestone 3.1 — Teleoperation Command Mapping
-        #
-        # 1. Command Timestamp:
-        #    Record the receipt time of this message in self.last_cmd_time.
-        #
-        # 2. Steering Mapping (Angular Velocity -> Steering Angle):
-        #    - Normalize msg.angular.z relative to self.max_angular_vel.
-        #    - Scale to steering radians using self.max_steer_rad.
-        #    - Constrain steering to [-self.max_steer_rad, self.max_steer_rad]
-        #      and store in self.current_steer.
-        #
-        # 3. Throttle / Velocity Mapping:
-        #    - In Open-Loop Mode (Milestone 3):
-        #        Normalize msg.linear.x relative to self.max_linear_vel.
-        #        Constrain effort to [-1.0, 1.0] and store in self.current_throttle.
-        #
-        #    - In Closed-Loop Cruise Control Mode (Milestone 4.2 Upgrade):
-        #        Instead of raw throttle, treat msg.linear.x as the target velocity
-        #        setpoint v_target (store in self.target_vel).
-        # ======================================================================
+        # This connects user inputs (keyboard/joystick) to the car's physical actuators.
+        # Map the incoming Twist linear/angular commands to throttle and steering.
         pass
 
     def publish_commands(self):
         """Periodically publishes throttle and steering commands at 10 Hz."""
-        # ======================================================================
         # TODO: Milestone 3.2 — Safety Watchdog & Command Publishing
-        #
-        # 1. Watchdog Timer:
-        #    - Compute the elapsed time (in seconds) since self.last_cmd_time.
-        #    - If elapsed time exceeds self.auto_zero_timeout:
-        #        Zero out active commands (throttle, steering, target velocity)
-        #        to prevent a runaway vehicle if communication is lost.
-        #        (If using cruise control, also reset the PID integrator).
-        #
-        # 2. Throttle Generation (Milestone 4.2 Closed-Loop only):
-        #    - If cruise control is active:
-        #        Compute self.current_throttle using your PIDLongitudinalController
-        #        given self.target_vel and self.current_vel.
-        #
-        # 3. ROS Telemetry Publishing:
-        #    - Construct Float32 messages for current throttle and steering.
-        #    - Publish to self.throttle_pub and self.steer_pub.
-        # ======================================================================
+        # This prevents the car from running away if the user's connection drops.
+        # Publish the commands, or zero them out if the last command is too old.
         pass
 
 

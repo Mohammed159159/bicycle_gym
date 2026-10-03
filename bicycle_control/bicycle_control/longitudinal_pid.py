@@ -29,26 +29,10 @@ class PIDLongitudinalController:
 
     def compute(self, target_vel, current_vel):
         """Computes normalized throttle/braking effort in [-1.0, 1.0]."""
-        # ======================================================================
         # TODO: Milestone 4.1 — Longitudinal PID Speed Control & Anti-Windup
-        #
-        # 1. Velocity Error:
-        #    Compute tracking error between target velocity and current velocity.
-        #
-        # 2. Integrator & Anti-Windup:
-        #    Accumulate error into self.integral over time step self.dt.
-        #    Clamp the accumulated integral to [-self.integral_limit, self.integral_limit]
-        #    to prevent actuator saturation and overshoot.
-        #
-        # 3. Finite Difference Derivative:
-        #    Compute the rate of change of error with respect to self.dt.
-        #    Update self.prev_error for the next control cycle.
-        #
-        # 4. Control Output & Actuator Saturation:
-        #    Compute the PID control signal: u = P + I + D.
-        #    Constrain output effort between [-self.max_brake, self.max_throttle].
-        #    Return the resulting float control effort.
-        # ======================================================================
+        # This is the speed regulator. Because the car has drag, simply setting
+        # a target speed isn't enough — it needs closed-loop control.
+        # Implement a PID controller on the velocity error with anti-windup on the integrator.
         pass
 
     def reset(self):

@@ -9,20 +9,31 @@
 
 ---
 
+## 🧠 What Is This Project About?
+
+In this project you will build the control system for a self-driving car in a ROS 2 simulation. The car drives around a racetrack and your job is to make it stay on the path, control its speed, and complete laps as fast and accurately as possible.
+
+You will work through a series of milestones, each building on the last:
+
+1. **Explore the system** — Learn what topics the car publishes and subscribes to.
+2. **Bring the car to life** — Implement the physics equations that describe how the car moves.
+3. **Drive it manually** — Build a keyboard teleoperation node to drive the car yourself.
+4. **Add cruise control** — Implement a PID speed controller so the car holds a steady speed.
+5. **Make it autonomous** — Implement three different steering controllers (Lateral PID, Pure Pursuit, and MPC) so the car drives itself around the track.
+6. **Monitor performance** — Build a lap analyzer that logs lap times, tracking error, and shows live graphs and 3D overlays in RViz.
+7. **Report your results** — Compare your controllers and document your findings.
+
+The car model is realistic: it has velocity as a state (not a direct input), meaning it accelerates and decelerates due to drag and friction — just like a real vehicle.
+
+> **The full task description and all mathematical background is in [TASK.md](./TASK.md).**
+
+---
+
 ## 📖 Hands-On Assignment Guide
 
 All instructions, mathematical derivations, milestone walkthroughs, and deliverable specifications are detailed in the official student task guide:
 
 👉 **[Read the Full Hands-On Assignment Guide (TASK.md)](./TASK.md)** 👈
-
----
-
-## 🏎️ Vehicle Physics Model
-
-This project implements an **Extended Kinematic Bicycle Model** (4-DOF: $x, y, \theta, v$) with Drive-by-Wire powertrain dynamics:
-- **State Vector** $\mathbf{x} = [x, y, \theta, v]^T \in \mathbb{R}^4$: Cartesian coordinates of the rear axle center $(x, y)$, heading angle $\theta$, and forward velocity $v$.
-- **Control Input Vector** $\mathbf{u} = [u_{throttle}, \delta]^T \in \mathbb{R}^2$: Normalized powertrain throttle/braking effort $u_{throttle} \in [-1.0, 1.0]$ (scaled by acceleration gain $k_a$) and front wheel steering angle $\delta \in [-\delta_{max}, \delta_{max}]$.
-- **Physical Resistance**: Accounts for motor drive torque, mechanical braking, rolling friction ($c_{roll} v$), and speed-squared aerodynamic drag ($c_{drag} v^2$).
 
 ---
 
@@ -33,12 +44,22 @@ This project implements an **Extended Kinematic Bicycle Model** (4-DOF: $x, y, \
 # Source ROS 2 Humble
 source /opt/ros/humble/setup.bash
 
-# Install dependencies (SciPy is required for MPC optimization)
-sudo apt update && sudo apt install -y python3-scipy python3-numpy
+# Install build, simulation, and controller dependencies
+sudo apt update && sudo apt install -y python3-colcon-common-extensions \
+  python3-numpy python3-scipy ros-humble-robot-state-publisher \
+  ros-humble-rviz2 ros-humble-xacro
 
 # Build the workspace (bicycle_sim, bicycle_control, track_environment)
-cd ~/Projects/content/ARL\ Sessions\ -\ Control/contorl_task
+cd /path/to/bicycle_gym-main
 colcon build --symlink-install
+source install/setup.bash
+```
+
+In every new terminal, source the ROS distribution and built workspace:
+
+```bash
+source /opt/ros/humble/setup.bash
+cd /path/to/bicycle_gym-main
 source install/setup.bash
 ```
 
@@ -52,7 +73,52 @@ source install/setup.bash
 | **Pure Pursuit (Geometric Preview)**| `ros2 launch bicycle_sim bicycle_sim.launch.py controller:=pure_pursuit` | Milestone 5.3 |
 | **Extended Kinematic MPC (Optimal Preview)** | `ros2 launch bicycle_sim bicycle_sim.launch.py controller:=mpc` | Milestone 5.4 |
 
-### 3. Real-Time Telemetry & Graphing
+For keyboard teleoperation, start the keyboard driver in a second sourced terminal:
+
+```bash
+sudo apt install -y ros-humble-teleop-twist-keyboard
+ros2 run teleop_twist_keyboard teleop_twist_keyboard
+```
+
+To request closed-loop cruise control in teleoperation mode:
+
+```bash
+ros2 launch bicycle_sim bicycle_sim.launch.py controller:=teleop use_cruise_control:=true
+```
+
+The launch file also supports `rviz:=false` and `analyzer:=false` to disable those nodes. For example:
+
+```bash
+ros2 launch bicycle_sim bicycle_sim.launch.py controller:=pure_pursuit rviz:=false
+```
+
+### 3. Inspecting the ROS Graph
+
+Run these commands from a second sourced terminal while the simulation is running:
+
+```bash
+ros2 node list
+ros2 topic list
+ros2 topic info /state
+ros2 topic info /throttle
+ros2 topic info /steer
+ros2 interface show nav_msgs/msg/Odometry
+ros2 interface show std_msgs/msg/Float32
+ros2 interface show geometry_msgs/msg/Twist
+ros2 topic echo /state
+```
+
+### 4. Direct Actuator Testing
+
+With the base simulation running, send actuator commands from another sourced terminal. Throttle/brake uses `[-1.0, 1.0]`; steering is in radians, with positive values turning left.
+
+```bash
+ros2 topic pub --once /throttle std_msgs/msg/Float32 "{data: 0.5}"
+ros2 topic pub --once /steer std_msgs/msg/Float32 "{data: 0.30}"
+ros2 topic pub --once /throttle std_msgs/msg/Float32 "{data: -1.0}"
+```
+
+### 5. Real-Time Telemetry & Graphing
 ```bash
 # Install plotting and telemetry visualization tools
 sudo apt update && sudo apt install -y ros-humble-plotjuggler-ros rqt-plot
@@ -63,6 +129,8 @@ ros2 run rqt_plot rqt_plot /telemetry/cte /telemetry/speed
 # Or launch PlotJuggler for multi-topic time-series analysis:
 ros2 run plotjuggler plotjuggler
 ```
+
+Some telemetry topics are only available after the corresponding analyzer work is complete.
 
 ---
 
