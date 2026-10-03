@@ -1,5 +1,5 @@
 """
-Path generator node: loads real racetrack waypoints from global_waypoints.json
+Path generator node: loads real racetrack waypoints from a CSV file
 and publishes nav_msgs/Path to /path and track boundary markers to /track_bounds.
 """
 
@@ -80,7 +80,7 @@ class PathGenerator(Node):
         return path
 
     def build_bounds_msg(self):
-        """Converts trackbounds markers from track JSON to visualization_msgs/MarkerArray."""
+        """Converts CSV track boundary markers to MarkerArray."""
         marker_array = MarkerArray()
         now = self.get_clock().now().to_msg()
 

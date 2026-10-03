@@ -4,7 +4,6 @@ Pure Python module without mandatory ROS dependencies for easy unit testing.
 """
 
 import csv
-import json
 import math
 import os
 
@@ -21,7 +20,7 @@ DEFAULT_TRACK_FILE = 'centerline_0.csv'
 
 
 class Track:
-    """Represents a racetrack loaded from global_waypoints.json"""
+    """Represents a racetrack loaded from a CSV file."""
 
     def __init__(self, track_file=None, trajectory_type='centerline', close_loop=True):
         self.track_file = track_file or DEFAULT_TRACK_FILE
@@ -32,18 +31,12 @@ class Track:
         if not self.file_path or not os.path.isfile(self.file_path):
             raise FileNotFoundError(f"Track file '{self.track_file}' could not be resolved.")
 
-        if self.file_path.endswith('.csv'):
-            self.raw_data = {}
-            self.waypoints = []
-            self._load_csv_track()
-        else:
-            with open(self.file_path, 'r') as f:
-                self.raw_data = json.load(f)
+        if not self.file_path.lower().endswith('.csv'):
+            raise ValueError(f"Track file '{self.track_file}' must be a CSV file.")
 
-            # list of dicts: {'x': ..., 'y': ..., 'psi': ..., 'kappa': ..., 's': ...}
-            self.waypoints = []
-            self._load_trajectory()
-            self.trackbounds_markers = self.raw_data.get('trackbounds_markers', {}).get('markers', [])
+        self.raw_data = {}
+        self.waypoints = []
+        self._load_csv_track()
 
     @staticmethod
     def get_search_paths(file_name):
@@ -88,6 +81,10 @@ class Track:
         """Extracts waypoints from a CSV file and trackbounds from random_track0.csv."""
         with open(self.file_path, 'r') as f:
             reader = csv.DictReader(f)
+            if not reader.fieldnames or not {'x', 'y'}.issubset(reader.fieldnames):
+                raise ValueError(
+                    f"Track CSV '{self.track_file}' must contain 'x' and 'y' columns."
+                )
             for row in reader:
                 x = float(row.get('x', 0.0))
                 y = float(row.get('y', 0.0))
@@ -106,6 +103,11 @@ class Track:
                     'vx': vx,
                     'ax': ax
                 })
+
+            if len(self.waypoints) < 2:
+                raise ValueError(
+                    f"Track CSV '{self.track_file}' contains fewer than 2 waypoints."
+                )
 
         # Calculate or refine headings if missing/zero
         n = len(self.waypoints)
@@ -162,64 +164,6 @@ class Track:
                     }
                     self.trackbounds_markers.append(marker)
                     marker_id += 1
-
-    def _load_trajectory(self):
-        """Extracts waypoints based on trajectory_type."""
-        key_map = {
-            'centerline': 'centerline_waypoints',
-            'sp': 'global_traj_wpnts_sp',
-            'shortest_path': 'global_traj_wpnts_sp',
-            'iqp': 'global_traj_wpnts_iqp',
-            'min_curvature': 'global_traj_wpnts_iqp'
-        }
-        json_key = key_map.get(self.trajectory_type, 'centerline_waypoints')
-        traj_data = self.raw_data.get(json_key, {})
-        wpnts = traj_data.get('wpnts', [])
-
-        if not wpnts and 'centerline_waypoints' in self.raw_data:
-            # Fallback to centerline if requested trajectory is not found
-            wpnts = self.raw_data['centerline_waypoints'].get('wpnts', [])
-
-        if len(wpnts) < 2:
-            raise ValueError(f"Track contains fewer than 2 waypoints in {json_key}")
-
-        self.waypoints = []
-        for wp in wpnts:
-            x = float(wp.get('x_m', 0.0))
-            y = float(wp.get('y_m', 0.0))
-            psi = float(wp.get('psi_rad', 0.0))
-            kappa = float(wp.get('kappa_radpm', 0.0))
-            s = float(wp.get('s_m', 0.0))
-            vx = float(wp.get('vx_mps', 0.0))
-            ax = float(wp.get('ax_mps2', 0.0))
-
-            self.waypoints.append({
-                'x': x,
-                'y': y,
-                'psi': psi,
-                'kappa': kappa,
-                's': s,
-                'vx': vx,
-                'ax': ax
-            })
-
-        # Calculate or refine headings if missing/zero
-        n = len(self.waypoints)
-        for i in range(n):
-            if self.waypoints[i]['psi'] == 0.0:
-                next_i = (i + 1) % n
-                dx = self.waypoints[next_i]['x'] - self.waypoints[i]['x']
-                dy = self.waypoints[next_i]['y'] - self.waypoints[i]['y']
-                self.waypoints[i]['psi'] = math.atan2(dy, dx)
-
-        # Close the loop if requested
-        if self.close_loop and n > 0:
-            first = self.waypoints[0].copy()
-            last = self.waypoints[-1]
-            dist_close = math.hypot(first['x'] - last['x'], first['y'] - last['y'])
-            if dist_close > 1e-4:
-                first['s'] = last['s'] + dist_close
-                self.waypoints.append(first)
 
     @property
     def x(self):

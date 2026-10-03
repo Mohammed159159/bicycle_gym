@@ -1,6 +1,7 @@
-from setuptools import find_packages, setup
-import os
 from glob import glob
+import os
+
+from setuptools import find_packages, setup
 
 package_name = 'track_environment'
 
@@ -12,7 +13,7 @@ setup(
         ('share/ament_index/resource_index/packages',
             ['resource/' + package_name]),
         ('share/' + package_name, ['package.xml']),
-        (os.path.join('share', package_name, 'tracks'), glob('tracks/*.json')),
+        (os.path.join('share', package_name, 'tracks'), glob('tracks/*.csv')),
     ],
     install_requires=['setuptools'],
     zip_safe=True,

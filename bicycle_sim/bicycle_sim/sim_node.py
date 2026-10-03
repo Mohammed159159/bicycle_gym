@@ -12,7 +12,7 @@ try:
     from track_environment.track import Track, DEFAULT_TRACK_FILE
 except ImportError:
     Track = None
-    DEFAULT_TRACK_FILE = 'global_waypoints.json'
+    DEFAULT_TRACK_FILE = 'centerline_0.csv'
 
 
 def main(args=None):
@@ -29,8 +29,10 @@ def main(args=None):
         try:
             track = Track(track_file=track_file)
             x0, y0, psi0 = track.start_pose
-        except Exception:
-            pass
+        except Exception as exc:
+            raise RuntimeError(
+                f"Failed to load track '{track_file}' for simulator start pose."
+            ) from exc
 
     x_initial = np.array([x0, y0, psi0, 0.0], dtype=np.float64)
 

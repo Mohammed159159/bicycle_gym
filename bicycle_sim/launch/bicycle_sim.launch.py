@@ -39,6 +39,7 @@ def generate_launch_description():
 
     # Launch configuration variables
     use_rviz = LaunchConfiguration('rviz')
+    track_file = LaunchConfiguration('track_file')
     trajectory_type = LaunchConfiguration('trajectory_type')
     controller = LaunchConfiguration('controller')
     use_analyzer = LaunchConfiguration('analyzer')
@@ -66,6 +67,11 @@ def generate_launch_description():
             'rviz',
             default_value='true',
             description='Launch RViz2 for visualization'
+        ),
+        DeclareLaunchArgument(
+            'track_file',
+            default_value='centerline_0.csv',
+            description='CSV track file to load for the path and simulator start pose'
         ),
         DeclareLaunchArgument(
             'trajectory_type',
@@ -103,6 +109,7 @@ def generate_launch_description():
             executable='sim_node',
             name='kinematic_bicycle',
             output='screen',
+            arguments=['--track', track_file],
             parameters=[{
                 'wheelbase_length': 0.3302,
                 'dt': 0.1,
@@ -117,6 +124,7 @@ def generate_launch_description():
             name='path_gen',
             output='screen',
             parameters=[{
+                'track_file': track_file,
                 'trajectory_type': trajectory_type,
                 'close_loop': True
             }]
